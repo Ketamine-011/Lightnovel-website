@@ -7,7 +7,7 @@ from flask_login import LoginManager
 app = Flask(__name__)
 
 
-app.config['SECRET_KEY'] = 'sieu_bao_mat_than_ke_bien_di_2026'
+app.config['SECRET_KEY'] = 'abcdxyz123456'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///lightnovel.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

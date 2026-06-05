@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import db, Truyen, Chuong
+from werkzeug.utils import secure_filename
+import os
 
 def regis_routes(app):
 
@@ -81,3 +83,31 @@ def regis_routes(app):
         db.session.commit()
 
         return redirect(url_for("home"))
+    @app.route("/them-truyen", methods=["POST"])
+    def them_truyen():
+
+        file = request.files.get("anh_bia")
+
+        ten_file = None
+
+    if file and file.filename:
+        ten_file = secure_filename(file.filename)
+
+        os.makedirs("static/uploads", exist_ok=True)
+
+        file.save(
+            os.path.join("static/uploads", ten_file)
+        )
+
+    truyen = Truyen(
+        ten_truyen=request.form["ten_truyen"],
+        tac_gia=request.form["tac_gia"],
+        the_loai=request.form["the_loai"],
+        mo_ta=request.form["mo_ta"],
+        anh_bia=ten_file
+    )
+
+    db.session.add(truyen)
+    db.session.commit()
+
+    return redirect(url_for("home"))

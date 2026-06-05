@@ -9,7 +9,7 @@ class Truyen(db.Model):
     tac_gia = db.Column(db.String(100), nullable = False)
     the_loai = db.Column(db.String(100), nullable = False)
     mo_ta = db.Column(db.Text, nullable = False)
-    chaps = db.relationship('chuong', backref = 'truyen', lazy = True)
+    chaps = db.relationship('Chuong', backref = 'truyen', lazy = True)
 
 # Database quản lý người dùng
 class User(UserMixin, db.Model):
@@ -26,4 +26,4 @@ class Chuong(db.Model):
     noi_dung = db.Column(db.Text, nullable=False)
     truyen_id = db.Column(db.Integer, db.ForeignKey('truyen.id'), nullable=False)
 
-db.create_all()
+

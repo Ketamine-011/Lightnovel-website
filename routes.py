@@ -52,7 +52,7 @@ def Routes(app):
     def logout():
         #xóa toàn bộ session của người dùng
         logout_user() 
-        return redirect(url_for("trang_chu")))
+        return redirect(url_for("trang_chu"))
     
 
 

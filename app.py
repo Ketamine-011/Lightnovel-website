@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models import db, Truyen
 from routes import regis_routes
 
+
 app = Flask(__name__)
 
 # =========================

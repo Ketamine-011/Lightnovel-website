@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Đăng Ký |Novels Horizon</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 (cho icon Facebook, Google, đẹp mắt) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: hiện đại, dễ đọc, đồng bộ với login -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        /* RESET & GLOBAL - giống hệt login để đồng bộ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Sử dụng chung hình nền anime/lightnovel mờ ảo + overlay tối (giống login) */
+            background: linear-gradient(rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0.68)), 
+                        url('https://images.pexels.com/photos/1191710/pexels-photo-1191710.jpeg?auto=compress&cs=tinysrgb&w=1600') center center/cover no-repeat fixed;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Card chính : nền tối mờ, glassmorphism, bóng đổ, bo góc mềm */
+        .glass-card {
+            background: rgba(20, 20, 30, 0.86);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 160, 70, 0.1) inset;
+            transition: transform 0.2s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Branding - tông cam/coral đặc trưng Wattpad */
+        .brand-logo {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6A2E 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 2.1rem;
+        }
+
+        .brand-sub {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: #c6c6d4;
+        }
+
+        /* Nút social login (đậm, bo tròn, đúng style wattpad) */
+        .btn-social {
+            border-radius: 2.5rem;
+            padding: 0.7rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-facebook {
+            background-color: #1877f2;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-facebook:hover {
+            background-color: #0e63cf;
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(24, 119, 242, 0.3);
+        }
+
+        .btn-google {
+            background-color: #ffffff;
+            color: #1e1e2f;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-google:hover {
+            background-color: #f8f9fc;
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            color: #dd4b39;
+        }
+
+        /* Đường kẻ ngang có chữ HOẶC */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #aaaabb;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin: 1.2rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .divider::before {
+            margin-right: 1rem;
+        }
+
+        .divider::after {
+            margin-left: 1rem;
+        }
+
+        /* Input style tối, viền mỏng, focus chuyển cam */
+        .form-control-custom {
+            background-color: rgba(15, 15, 25, 0.75);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            color: #f0f0f0;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .form-control-custom:focus {
+            border-color: #FF8C42;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.25);
+            background-color: rgba(20, 20, 32, 0.95);
+            color: white;
+        }
+
+        .form-control-custom::placeholder {
+            color: #a1a1b5;
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        /* Nút ĐĂNG KÝ màu cam/coral chính, full width */
+        .btn-register {
+            background: linear-gradient(95deg, #FF8C42 0%, #FF6A2E 100%);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.85rem;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 14px rgba(255, 108, 46, 0.3);
+            color: white;
+        }
+
+        .btn-register:hover {
+            background: linear-gradient(95deg, #FF9E5E 0%, #FF7D44 100%);
+            transform: scale(1.01);
+            box-shadow: 0 10px 22px rgba(255, 108, 46, 0.45);
+            color: white;
+        }
+
+        /* Link footer (Đăng nhập ngay) */
+        .login-link {
+            color: #FF9B54;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .login-link:hover {
+            color: #FFB67A;
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            font-size: 0.8rem;
+            color: #b1b1c2;
+        }
+
+        /* Alert lỗi (giống login, tối màu phù hợp) */
+        .alert-custom-danger {
+            background-color: rgba(220, 53, 69, 0.18);
+            border-left: 4px solid #ff6b6b;
+            color: #ffe0e0;
+            border-radius: 1rem;
+            backdrop-filter: blur(4px);
+            font-weight: 500;
+        }
+
+        /* Responsive nhỏ gọn */
+        @media (max-width: 576px) {
+            .glass-card {
+                margin: 1rem;
+                padding: 1.8rem !important;
+            }
+            .brand-logo {
+                font-size: 1.8rem;
+            }
+            .btn-social {
+                font-size: 0.8rem;
+                padding: 0.6rem 0.5rem;
+            }
+        }
+
+        /* loại bỏ hiệu ứng outline mặc định xấu */
+        .btn:focus, .form-control:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        .form-control-custom:focus {
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.3);
+        }
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex align-items-center justify-content-center min-vh-100 py-4">
+        <div class="row w-100 justify-content-center">
+            <div class="col-12 col-md-6 col-lg-5 col-xl-4">
+                <!-- Register Card – đồng bộ hoàn toàn với login nhưng dành cho đăng ký -->
+                <div class="glass-card p-4 p-lg-5">
+                    
+                    <!-- Branding: tên nổi bật + slogan -->
+                    <div class="text-center mb-3">
+                        <h1 class="brand-logo mb-1">Novels Horizon</h1>
+                        <div class="brand-sub">✦  Đăng ký để khám phá thế giới truyện  ✦</div>
+                    </div>
+
+                    <!-- Hiển thị lỗi từ Flask (Jinja2) - trùng tài khoản hoặc email -->
+                    {% if error %}
+                        <div class="alert alert-danger py-2 small alert-custom-danger mb-4" role="alert">
+                            <i class="fas fa-exclamation-circle me-1"></i> {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <!-- KHU VỰC SOCIAL REGISTER (giống login nhưng chữ "Đăng ký bằng...") -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-sm-6">
+                            <a href="#" class="btn btn-social btn-facebook w-100" role="button">
+                                <i class="fab fa-facebook-f me-2"></i> Đăng ký bằng Facebook
+                            </a>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <a href="#" class="btn btn-social btn-google w-100" role="button">
+                                <i class="fab fa-google me-2"></i> Đăng ký bằng Google
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Đường kẻ ngang chữ HOẶC -->
+                    <div class="divider">
+                        <span>HOẶC</span>
+                    </div>
+
+                    <!-- Form ĐĂNG KÝ chính: method POST, action="/dang_ky" (đúng yêu cầu backend) -->
+                    <form method="POST" action="/dang_ky" class="mt-2">
+                        <!-- Ô nhập tài khoản (username) bắt buộc -->
+                        <div class="mb-3">
+                            <input type="text" class="form-control form-control-custom w-100" id="username" name="username" placeholder="Tên đăng nhập" autocomplete="username" required>
+                        </div>
+                        <!-- Ô nhập Email bắt buộc -->
+                        <div class="mb-3">
+                            <input type="email" class="form-control form-control-custom w-100" id="email" name="email" placeholder="Địa chỉ Email" autocomplete="email" required>
+                        </div>
+                        <!-- Ô nhập mật khẩu bắt buộc -->
+                        <div class="mb-4">
+                            <input type="password" class="form-control form-control-custom w-100" id="password" name="password" placeholder="Mật khẩu" autocomplete="new-password" required>
+                        </div>
+
+                        <!-- Nút ĐĂNG KÝ full chiều ngang, màu cam nổi bật -->
+                        <button type="submit" class="btn btn-register w-100">
+                            ĐĂNG KÝ <i class="fas fa-user-plus ms-2"></i>
+                        </button>
+                    </form>
+
+                    <!-- Footer: Đã có tài khoản? Đăng nhập ngay (link đúng /dang_Nhap) -->
+                    <div class="text-center mt-4 footer-note">
+                        Đã có tài khoản? 
+                        <a href="/dang_nhap" class="login-link">Đăng nhập ngay</a>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="opacity-50" style="font-size: 0.7rem;">© LightNovel World · Hàng ngàn bộ truyện đang chờ</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle (nhẹ nhàng, nếu cần components nhưng không ảnh hưởng) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

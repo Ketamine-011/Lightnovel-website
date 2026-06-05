@@ -60,24 +60,23 @@ def Routes(app):
             ).all()
         else:
             ds_truyen = Truyen.query.all()
-
-        truyen_hot = Truyen.query.order_by(
-            Truyen.luot_xem.desc()
-        ).limit(5).all()
+            top_10 = Truyen.query.order_by(Truyen.luot_xem.desc()).limit(10).all()
 
         return render_template(
             "trang_chu.html",
             ds_truyen=ds_truyen,
-            truyen_hot=truyen_hot
+            top_10 = top_10
         )
 
     # ======================
     # Chi tiết truyện
     # ======================
-    @app.route("/chi_tiet_truyen/<int:id>")
+    @app.route("/truyen/<int:id>")
     def chi_tiet_truyen(id):
         truyen = Truyen.query.get_or_404(id)
         ds_chuong = Chuong.query.filter_by(id_truyen=id).all()
+        truyen.luot_xem += 1
+        db.session.commit()
         return render_template("chi_tiet_truyen.html", truyen=truyen, ds_chuong=ds_chuong)
 
     # ======================

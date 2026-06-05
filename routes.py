@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from models import User, db, Truyen, Chuong
 from werkzeug.security import generate_password_hash, check_password_hash

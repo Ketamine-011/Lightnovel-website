@@ -1,27 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from models import User, db, Truyen, Chuong
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 
 
-def check_role(*args):
-    if current_user.role not in args:
-        return render_template("trang_chu.html", error="Bạn không có quyền làm việc này")
+def check_role(role):
+    if current_user.role != role:
+        abort(403) 
+        
     
 def Routes(app):
-    @app.route("/dang_nhap", methods=["GET", "POST"])
+    @app.route("/dang_nhap", methods = ["GET", "POST"])
     def login():
         if request.method == "POST":
             login_username = request.form["username"]
             login_pw = request.form["password"]
-            check_username = User.query.filter_by(username=login_username).first()
-            if check_username and check_password_hash(check_username.password, login_pw):
-                login_user(check_username)
-                return redirect(url_for("trang_chu"))
+            check_user = User.query.filter_by(username = login_username).first()
+            if check_user and check_password_hash(check_user.password, login_pw):
+                login_user(check_user)
+                return redirect(url_for("home"))
             else:
-                return render_template("dang_nhap.html", error="Tên đăng nhập hoặc mật khẩu không đúng.")
+                return render_template("dang_nhap.html", error = "Tên đăng nhập hoặc mật khẩu không đúng.")
         return render_template("dang_nhap.html")
+        
 
             
 
@@ -31,9 +33,11 @@ def Routes(app):
             regis_username = request.form["username"]
             regis_email = request.form["email"]
             pw = request.form["password"]
+
             #Hàm filter_by trả về đối tượng nếu có tồn tại trong database, nếu không có sẽ trả về None.
             #Hàm first() sẽ lấy phần tử đầu tiên trong kết quả truy vấn. Nếu không có, nó sẽ trả về None.
             #Không có hàm first(), câu truy vấn sẽ không được thực thi và chỉ trả về câu truy vấn
+
             if User.query.filter_by(username=regis_username).first():
                 return render_template("dang_ky.html", error="Tên đăng nhập đã tồn tại.")
             elif User.query.filter_by(email=regis_email).first():
@@ -42,7 +46,7 @@ def Routes(app):
                 # Mã hóa mật khẩu trước khi lưu vào database
                 hashed_pw = generate_password_hash(pw)
 
-                new_user = User(username = regis_username, email = regis_email, password = hashed_pw)
+                new_user = User(username = regis_username, email = regis_email, password = hashed_pw, role = "admin")
                 db.session.add(new_user)
                 db.session.commit()
                 return redirect(url_for("login"))
@@ -52,7 +56,7 @@ def Routes(app):
     def logout():
         #xóa toàn bộ session của người dùng
         logout_user() 
-        return redirect(url_for("trang_chu"))
+        return redirect(url_for("home"))
     
 
 
@@ -61,8 +65,9 @@ def Routes(app):
 # Trang chủ + tìm kiếm
 # =====================
     @app.route("/")
-    @login_required
     def home():
+
+    
         
         tu_khoa = request.args.get("q", "")
 
@@ -72,11 +77,25 @@ def Routes(app):
             ).all()
         else:
             ds_truyen = Truyen.query.all()
+            top_10 = Truyen.query.order_by(Truyen.luot_xem.desc()).limit(10).all()
 
         return render_template(
             "trang_chu.html",
-            ds_truyen=ds_truyen
+            ds_truyen=ds_truyen,
+            top_10=top_10
         )
+    # ======================
+    # Chi tiết truyện
+    # ======================
+    @app.route("/truyen/<int:id>")
+    def chi_tiet_truyen(id):
+        truyen = Truyen.query.get_or_404(id)
+        ds_chuong = Chuong.query.filter_by(id_truyen=id).all()
+        truyen.luot_xem += 1
+        db.session.commit()
+        return render_template("chi_tiet_truyen.html", truyen=truyen, ds_chuong=ds_chuong)
+
+
 
     # ======================
     # Xóa truyện
@@ -84,7 +103,7 @@ def Routes(app):
     @app.route("/xoa-truyen/<int:id>")
     @login_required
     def xoa_truyen(id):
-        check_role("admin", "author")
+        check_role("admin")
 
         truyen = Truyen.query.get_or_404(id)
 
@@ -92,6 +111,7 @@ def Routes(app):
         db.session.commit()
 
         return redirect(url_for("trang_chu"))
+    
 
     # ======================
     # Thêm chương
@@ -99,7 +119,7 @@ def Routes(app):
     @app.route("/them-chuong", methods=["POST"])
     @login_required
     def them_chuong():
-        check_role("admin", "author")
+        check_role("admin")
 
         chuong = Chuong(
             ten_chuong=request.form["ten_chuong"],
@@ -119,7 +139,7 @@ def Routes(app):
     @login_required
     def sua_chuong(id):
 
-        check_role("admin", "author")
+        check_role("admin")
 
         chuong = Chuong.query.get_or_404(id)
 
@@ -137,7 +157,7 @@ def Routes(app):
     @login_required
     def xoa_chuong(id):
 
-        check_role("admin", "author")
+        check_role("admin")
 
         chuong = Chuong.query.get_or_404(id)
 

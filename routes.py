@@ -47,7 +47,7 @@ def Routes(app):
                 hashed_pw = generate_password_hash(pw)
 
 
-                new_user = User(username = regis_username, email = regis_email, password = hashed_pw)
+                new_user = User(username = regis_username, email = regis_email, password = hashed_pw, role="admin")
                 db.session.add(new_user)
                 db.session.commit()
                 return redirect(url_for("login"))
@@ -58,7 +58,6 @@ def Routes(app):
     def logout():
         logout_user() 
         return redirect(url_for("home"))
-
 
 
 
@@ -100,19 +99,19 @@ def Routes(app):
         check_role("admin")
         tat_ca_truyen = Truyen.query.all()
 
-        chon_id = request.args.get("truyen_id", type=int)
+        chon_id = request.args.get("id_truyen", type=int)
         chon_truyen = None
         ds_chuong = []
         if chon_id:
-            chon_truyen = Truyen.query.get(selected_id)
+            chon_truyen = Truyen.query.get(chon_id)
             if chon_truyen:
-                ds_chuong = Chuong.query.filter_by(id_truyen=selected_id).all()
+                ds_chuong = Chuong.query.filter_by(id_truyen=chon_id).all()
    
 
         return render_template("quan_ly.html", 
                            ds_truyen=tat_ca_truyen,
                            selected_truyen=chon_truyen,
-                           selected_truyen_id=chon_id,
+                           selected_id_truyen=chon_id,
                            ds_chuong=ds_chuong)
  
     @app.route("/them-truyen", methods=["GET", "POST"])
@@ -168,7 +167,7 @@ def Routes(app):
         chuong = Chuong(
             ten_chuong=request.form["ten_chuong"],
             noi_dung=request.form["noi_dung"],
-            truyen_id=request.form["truyen_id"]
+            id_truyen=request.form["id_truyen"]
         )
         db.session.add(chuong)
         db.session.commit()

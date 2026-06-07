@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ truyen.ten_truyen }} - LightNovel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background: #f8f9fc;
+        }
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 0.8rem 0;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.7rem;
+            background: linear-gradient(135deg, #FF8C42, #FF6A2E);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #2c3e50;
+            transition: 0.2s;
+        }
+        .nav-link:hover {
+            color: #FF8C42;
+        }
+        .avatar-dropdown .dropdown-toggle::after {
+            display: none;
+        }
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background: #FF8C42;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .avatar-circle:hover {
+            background: #FF6A2E;
+            transform: scale(1.05);
+        }
+        .novel-header {
+            background: linear-gradient(120deg, #1e2a3a 0%, #0f1724 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 1.5rem 1.5rem;
+        }
+        .novel-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .novel-meta {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 1.5rem;
+        }
+        .novel-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .info-item i {
+            color: #FF8C42;
+            font-size: 1.2rem;
+        }
+        .description-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            border-left: 5px solid #FF8C42;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .chapter-list {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .chapter-item {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .chapter-item:hover {
+            background: #f8f9fc;
+            padding-left: 1.5rem;
+        }
+        .chapter-item a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+        }
+        .chapter-item a:hover {
+            color: #FF8C42;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 1rem;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #FF8C42;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: 0.2s;
+        }
+        .btn-back:hover {
+            background: #FF6A2E;
+            color: white;
+        }
+        footer {
+            background: #1e2a3a;
+            color: #b0c4de;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .novel-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">LNOVEL</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown avatar-dropdown">
+                        <a class="nav-link dropdown-toggle p-0" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="avatar-circle">{{ current_user.username[0]|upper }}</div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if current_user.role == 'admin' %}
+                            <li><a class="dropdown-item" href="{{ url_for('quan_ly') }}"><i class="fas fa-cog me-2"></i>Quản lý</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ================= NOVEL HEADER ================= -->
+<div class="novel-header">
+    <div class="container">
+        <a href="{{ url_for('home') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+        <h1 class="novel-title">{{ truyen.ten_truyen }}</h1>
+        <p class="novel-meta"><i class="fas fa-feather-alt"></i> {{ truyen.tac_gia }}</p>
+        <div class="novel-info">
+            <div class="info-item">
+                <i class="fas fa-tag"></i>
+                <span>{{ truyen.the_loai }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-eye"></i>
+                <span>{{ truyen.luot_xem }} lượt xem</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-book"></i>
+                <span>{{ ds_chuong|length }} chương</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= NOVEL DESCRIPTION ================= -->
+<div class="container">
+    <div class="description-section">
+        <h3 class="section-title">Mô tả</h3>
+        <p style="line-height: 1.8; color: #5a6e7c; font-size: 1.05rem;">{{ truyen.mo_ta }}</p>
+    </div>
+
+    <!-- ================= CHAPTER LIST ================= -->
+    <div class="chapter-list">
+        <h3 class="section-title">Danh sách chương ({{ ds_chuong|length }} chương)</h3>
+        
+        {% if ds_chuong %}
+            <div class="list-group">
+                {% for chuong in ds_chuong %}
+                <div class="chapter-item">
+                    <a href="{{ url_for('chi_tiet_truyen', id=truyen.id, chuong_id=chuong.id) }}">
+                        <i class="fas fa-file-lines me-2"></i>
+                        <strong>Chương {{ loop.index }}:</strong> {{ chuong.ten_chuong }}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-inbox fa-3x text-muted"></i>
+                <h4 class="mt-3">Chưa có chương nào</h4>
+                <p class="text-muted">Truyện này vừa được thêm vào. Vui lòng quay lại sau!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    <div class="container">
+        <p class="mb-0"><i class="fas fa-dragon"></i> LightNovel Haven - Nơi đam mê bay xa</p>
+        <small>&copy; 2025 LNOVEL. Mọi quyền được bảo lưu.</small>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

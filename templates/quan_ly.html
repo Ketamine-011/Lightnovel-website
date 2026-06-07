@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý truyện & chương | LNOVEL</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background: #f4f6f9; font-family: 'Segoe UI', system-ui; }
+        .sidebar { background: #1e2a3a; min-height: 100vh; }
+        .sidebar .nav-link { color: #cbd5e0; padding: 0.8rem 1rem; border-radius: 0.5rem; margin: 0.2rem 0; transition: 0.2s; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background: #FF8C42; color: white; }
+        .sidebar .nav-link i { width: 1.8rem; }
+        .main-content { padding: 2rem; }
+        .card-custom { border: none; border-radius: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 2rem; background: white; }
+        .btn-orange { background: #FF8C42; border: none; color: white; border-radius: 2rem; padding: 0.5rem 1.5rem; }
+        .btn-orange:hover { background: #FF6A2E; }
+        .btn-outline-orange { border: 1px solid #FF8C42; color: #FF8C42; border-radius: 2rem; background: transparent; }
+        .btn-outline-orange:hover { background: #FF8C42; color: white; }
+        .table th { background: #f8f9fc; }
+        .modal-content { border-radius: 1rem; }
+        .section { display: none; }
+        .section.active { display: block; }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 px-0 sidebar">
+            <div class="p-3 text-center border-bottom border-secondary">
+                <h4 class="fw-bold text-white">LNOVEL</h4>
+                <small class="text-secondary">Quản trị</small>
+            </div>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-quan-ly-truyen" href="#" data-section="quan-ly-truyen">
+                        <i class="fas fa-book"></i> Quản lý truyện
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-quan-ly-chuong" href="#" data-section="quan-ly-chuong">
+                        <i class="fas fa-pen-fancy"></i> Quản lý chương
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Nội dung chính -->
+        <div class="col-md-9 col-lg-10 main-content">
+            <!-- Quản lý truyện -->
+            <div id="quan-ly-truyen" class="section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3><i class="fas fa-book-open me-2" style="color: #FF8C42;"></i> Quản lý truyện</h3>
+                    <button class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#themTruyenModal">
+                        <i class="fas fa-plus"></i> Thêm truyện mới
+                    </button>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endwith %}
+                <div class="card-custom">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr><th>ID</th><th>Tên truyện</th><th>Tác giả</th><th>Thể loại</th><th>Lượt xem</th><th>Thao tác</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for truyen in ds_truyen %}
+                                    <tr>
+                                        <td>{{ truyen.id }}</td>
+                                        <td><strong>{{ truyen.ten_truyen }}</strong></td>
+                                        <td>{{ truyen.tac_gia }}</td>
+                                        <td>{{ truyen.the_loai }}</td>
+                                        <td>{{ truyen.luot_xem }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-orange me-1" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#suaTruyenModal"
+                                                    data-id="{{ truyen.id }}"
+                                                    data-ten="{{ truyen.ten_truyen }}"
+                                                    data-tacgia="{{ truyen.tac_gia }}"
+                                                    data-theloai="{{ truyen.the_loai }}"
+                                                    data-mota="{{ truyen.mo_ta }}">
+                                                <i class="fas fa-edit"></i> Sửa
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#xoaTruyenModal"
+                                                    data-id="{{ truyen.id }}"
+                                                    data-ten="{{ truyen.ten_truyen }}">
+                                                <i class="fas fa-trash-alt"></i> Xóa
+                                            </button>
+                                         </td>
+                                     </tr>
+                                    {% else %}
+                                    <tr><td colspan="6" class="text-center">Chưa có truyện nào. Hãy thêm truyện mới!</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quản lý chương -->
+            <div id="quan-ly-chuong" class="section">
+                <h3><i class="fas fa-pen-fancy me-2" style="color: #FF8C42;"></i> Quản lý chương truyện</h3>
+                <div class="card-custom p-3 mb-4">
+                    <form method="GET" action="{{ url_for('quan_ly') }}" class="row g-3 align-items-end">
+                        <input type="hidden" name="tab" value="chuong">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Chọn truyện để quản lý chương</label>
+                            <select name="id_truyen" class="form-select" onchange="this.form.submit()">
+                                <option value="">-- Chọn truyện --</option>
+                                {% for truyen in ds_truyen %}
+                                    <option value="{{ truyen.id }}" {% if truyen.id == selected_id_truyen %}selected{% endif %}>
+                                        {{ truyen.ten_truyen }} (ID: {{ truyen.id }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                {% if selected_truyen %}
+                    <div class="card-custom p-3 mb-4">
+                        <h5 class="mb-3"><i class="fas fa-plus-circle text-success"></i> Thêm chương mới cho "{{ selected_truyen.ten_truyen }}"</h5>
+                        <form method="POST" action="{{ url_for('them_chuong') }}">
+                            <input type="hidden" name="id_truyen" value="{{ selected_truyen.id }}">
+                            <div class="mb-3">
+                                <label class="form-label">Tên chương *</label>
+                                <input type="text" name="ten_chuong" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nội dung *</label>
+                                <textarea name="noi_dung" rows="5" class="form-control" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-orange"><i class="fas fa-save"></i> Thêm chương</button>
+                        </form>
+                    </div>
+                    <div class="card-custom p-3">
+                        <h5 class="mb-3"><i class="fas fa-list"></i> Danh sách chương</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr><th>ID</th><th>Tên chương</th><th>Nội dung (trích)</th><th>Thao tác</th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for chuong in ds_chuong %}
+                                    <tr>
+                                        <td>{{ chuong.id }}</td>
+                                        <td><strong>{{ chuong.ten_chuong }}</strong></td>
+                                        <td>{{ chuong.noi_dung[:100] }}{% if chuong.noi_dung|length > 100 %}...{% endif %}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-orange me-1" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#suaChuongModal"
+                                                    data-id="{{ chuong.id }}"
+                                                    data-ten="{{ chuong.ten_chuong }}"
+                                                    data-noidung="{{ chuong.noi_dung }}">
+                                                <i class="fas fa-edit"></i> Sửa
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#xoaChuongModal"
+                                                    data-id="{{ chuong.id }}"
+                                                    data-ten="{{ chuong.ten_chuong }}">
+                                                <i class="fas fa-trash-alt"></i> Xóa
+                                            </button>
+                                         </td>
+                                     </tr>
+                                    {% else %}
+                                    <tr><td colspan="4" class="text-center">Chưa có chương nào cho truyện này.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% elif selected_id_truyen and not selected_truyen %}
+                    <div class="alert alert-warning">Không tìm thấy truyện với ID đã chọn.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm truyện -->
+<div class="modal fade" id="themTruyenModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Thêm truyện mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('them_truyen') }}">
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Tên truyện *</label><input type="text" name="ten_truyen" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Tác giả *</label><input type="text" name="tac_gia" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Thể loại *</label><input type="text" name="the_loai" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Mô tả</label><textarea name="mo_ta" rows="3" class="form-control"></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-orange">Thêm truyện</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sửa truyện -->
+<div class="modal fade" id="suaTruyenModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title"><i class="fas fa-edit"></i> Sửa truyện</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="suaForm" action="#">
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Tên truyện</label><input type="text" name="ten_truyen" id="sua_ten" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Tác giả</label><input type="text" name="tac_gia" id="sua_tacgia" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Thể loại</label><input type="text" name="the_loai" id="sua_theloai" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Mô tả</label><textarea name="mo_ta" id="sua_mota" rows="3" class="form-control"></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-orange">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xóa truyện -->
+<div class="modal fade" id="xoaTruyenModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Xóa truyện</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn xóa truyện <strong id="xoa_ten"></strong>?</p>
+                <p class="text-danger">Hành động không thể hoàn tác!</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" id="xoaForm" action="#">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sửa chương -->
+<div class="modal fade" id="suaChuongModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title"><i class="fas fa-edit"></i> Sửa chương</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="suaChuongForm" action="#">
+                <div class="modal-body">
+                    <div class="mb-3"><label class="form-label">Tên chương</label><input type="text" name="ten_chuong" id="sua_ten_chuong" class="form-control" required></div>
+                    <div class="mb-3"><label class="form-label">Nội dung</label><textarea name="noi_dung" id="sua_noi_dung" rows="8" class="form-control" required></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-orange">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xóa chương -->
+<div class="modal fade" id="xoaChuongModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Xóa chương</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn xóa chương <strong id="xoa_ten_chuong"></strong>?</p>
+                <p class="text-danger">Hành động không thể hoàn tác!</p>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" id="xoaChuongForm" action="#">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Khởi tạo các modal để set action đúng
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sửa truyện
+        var suaTruyenModal = document.getElementById('suaTruyenModal');
+        suaTruyenModal.addEventListener('show.bs.modal', function(event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var ten = button.getAttribute('data-ten');
+            var tacgia = button.getAttribute('data-tacgia');
+            var theloai = button.getAttribute('data-theloai');
+            var mota = button.getAttribute('data-mota');
+            var form = document.getElementById('suaForm');
+            form.action = "{{ url_for('sua_truyen', id=0) }}".replace('0', id);
+            document.getElementById('sua_ten').value = ten;
+            document.getElementById('sua_tacgia').value = tacgia;
+            document.getElementById('sua_theloai').value = theloai;
+            document.getElementById('sua_mota').value = mota;
+        });
+        // Xóa truyện
+        var xoaTruyenModal = document.getElementById('xoaTruyenModal');
+        xoaTruyenModal.addEventListener('show.bs.modal', function(event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var ten = button.getAttribute('data-ten');
+            document.getElementById('xoa_ten').innerText = ten;
+            var xoaForm = document.getElementById('xoaForm');
+            xoaForm.action = "{{ url_for('xoa_truyen', id=0) }}".replace('0', id);
+        });
+        // Sửa chương
+        var suaChuongModal = document.getElementById('suaChuongModal');
+        suaChuongModal.addEventListener('show.bs.modal', function(event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var ten = button.getAttribute('data-ten');
+            var noidung = button.getAttribute('data-noidung');
+            var form = document.getElementById('suaChuongForm');
+            form.action = "{{ url_for('sua_chuong', id=0) }}".replace('0', id);
+            document.getElementById('sua_ten_chuong').value = ten;
+            document.getElementById('sua_noi_dung').value = noidung;
+        });
+        // Xóa chương
+        var xoaChuongModal = document.getElementById('xoaChuongModal');
+        xoaChuongModal.addEventListener('show.bs.modal', function(event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var ten = button.getAttribute('data-ten');
+            document.getElementById('xoa_ten_chuong').innerText = ten;
+            var xoaForm = document.getElementById('xoaChuongForm');
+            xoaForm.action = "{{ url_for('xoa_chuong', id=0) }}".replace('0', id);
+        });
+    });
+
+    // Chuyển tab và cập nhật URL
+    function activeTabFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab === 'chuong') {
+            document.getElementById('quan-ly-truyen').classList.remove('active');
+            document.getElementById('quan-ly-chuong').classList.add('active');
+            document.getElementById('tab-quan-ly-truyen').classList.remove('active');
+            document.getElementById('tab-quan-ly-chuong').classList.add('active');
+        } else {
+            document.getElementById('quan-ly-truyen').classList.add('active');
+            document.getElementById('quan-ly-chuong').classList.remove('active');
+            document.getElementById('tab-quan-ly-truyen').classList.add('active');
+            document.getElementById('tab-quan-ly-chuong').classList.remove('active');
+        }
+    }
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const sectionId = this.getAttribute('data-section');
+            let newTab = (sectionId === 'quan-ly-chuong') ? 'chuong' : 'truyen';
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', newTab);
+            if (sectionId === 'quan-ly-truyen') url.searchParams.delete('id_truyen');
+            window.location.href = url.toString();
+        });
+    });
+    activeTabFromURL();
+</script>
+</body>
+</html>

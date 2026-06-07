@@ -47,7 +47,7 @@ def Routes(app):
                 hashed_pw = generate_password_hash(pw)
 
 
-                new_user = User(username = regis_username, email = regis_email, password = hashed_pw, role="admin")
+                new_user = User(username = regis_username, email = regis_email, password = hashed_pw)
                 db.session.add(new_user)
                 db.session.commit()
                 return redirect(url_for("login"))
@@ -195,34 +195,29 @@ def Routes(app):
         return redirect(url_for("quan_ly")) 
     @app.route("/doc-chuong/<int:id>")
     def doc_truyen(id):
-        chuong_hien_tai = db.session.get(Chuong, id)
-
-        if not chuong_hien_tai:
-            abort(404)
-
-            truyen_chu_quan = db.session.get(Truyen, chuong_hien_tai.truyen_id)
-
-
-        if truyen_chu_quan:
-            truyen_chu_quan.luot_xem = truyen_chu_quan.luot_xem + 1
-            db.session.commit() 
-
+        chuong_hien_tai = Chuong.query.get_or_404(id)
+        truyen_so_huu = Truyen.query.get_or_404(chuong_hien_tai.id_truyen)
+    
+        # Tăng lượt xem cho truyện
+        truyen_so_huu.luot_xem += 1
+        db.session.commit()
+    
+        # Chương trước
         chuong_truoc = Chuong.query.filter(
-            Chuong.truyen_id == chuong_hien_tai.truyen_id,
+            Chuong.id_truyen == chuong_hien_tai.id_truyen,
             Chuong.id < id
         ).order_by(Chuong.id.desc()).first()
-
-
+    
+        # Chương tiếp
         chuong_tiep = Chuong.query.filter(
-            Chuong.truyen_id == chuong_hien_tai.truyen_id,
+            Chuong.id_truyen == chuong_hien_tai.id_truyen,
             Chuong.id > id
         ).order_by(Chuong.id.asc()).first()
-
-
+    
         return render_template(
             "doc_truyen.html",
-            chuong=chuong_hien_tai,       # Khớp với biến {{ chuong }} ngoài HTML
-            truyen=truyen_chu_quan,       # Khớp với biến {{ truyen }} ngoài HTML
-            prev_chuong=chuong_truoc,     # Khớp với biến {{ prev_chuong }} ngoài HTML
-            next_chuong=chuong_tiep       # Khớp với biến {{ next_chuong }} ngoài HTML
+            chuong=chuong_hien_tai,
+            truyen=truyen_so_huu,
+            chuong_truoc=chuong_truoc,
+            chuong_tiep=chuong_tiep
         )

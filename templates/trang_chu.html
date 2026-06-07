@@ -4,213 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LightNovel - Thư viện truyện online</title>
-    <!-- Bootstrap 5 + Icons + Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
         body { background: #f8f9fc; }
-        
-        /* Navbar */
-        .navbar {
-            background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            padding: 0.8rem 0;
-        }
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.7rem;
-            background: linear-gradient(135deg, #FF8C42, #FF6A2E);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        .nav-link {
-            font-weight: 500;
-            color: #2c3e50;
-            transition: 0.2s;
-        }
+        .navbar { background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 0.8rem 0; }
+        .navbar-brand { font-weight: 800; font-size: 1.7rem; background: linear-gradient(135deg, #FF8C42, #FF6A2E); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .nav-link { font-weight: 500; color: #2c3e50; transition: 0.2s; }
         .nav-link:hover { color: #FF8C42; }
-        
-        /* Avatar */
         .avatar-dropdown .dropdown-toggle::after { display: none; }
-        .avatar-circle {
-            width: 40px;
-            height: 40px;
-            background: #FF8C42;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .avatar-circle:hover {
-            background: #FF6A2E;
-            transform: scale(1.05);
-        }
+        .avatar-circle { width: 40px; height: 40px; background: #FF8C42; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
+        .avatar-circle:hover { background: #FF6A2E; transform: scale(1.05); }
         
-        /* Search bar */
-        .search-section {
-            margin-bottom: 2rem;
-        }
-        .search-form .input-group {
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-radius: 60px;
-            overflow: hidden;
-        }
-        .search-form input {
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 60px 0 0 60px;
-        }
-        .search-form button {
-            background: #FF8C42;
-            border: none;
-            padding: 0 1.8rem;
-            font-weight: 600;
-            border-radius: 0 60px 60px 0;
-            color: white;
-        }
+        .hero-search { background: linear-gradient(120deg, #1e2a3a 0%, #0f1724 100%); padding: 3rem 1rem; border-radius: 0 0 2rem 2rem; margin-bottom: 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .hero-search h1 { font-weight: 700; color: white; }
+        .search-form .input-group { box-shadow: 0 8px 20px rgba(0,0,0,0.2); border-radius: 60px; overflow: hidden; }
+        .search-form input { border: none; padding: 0.8rem 1.5rem; border-radius: 60px 0 0 60px; }
+        .search-form button { background: #FF8C42; border: none; padding: 0 1.8rem; font-weight: 600; border-radius: 0 60px 60px 0; color: white; }
         .search-form button:hover { background: #FF6A2E; }
         
-        /* Novel Card */
-        .novel-card {
-            border: none;
-            border-radius: 1rem;
-            transition: 0.2s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            background: white;
-            height: 100%;
-        }
-        .novel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 25px -8px rgba(0,0,0,0.1);
-        }
+        .novel-card { border: none; border-radius: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: white; height: 100%; transition: 0.2s; }
+        .novel-card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px -8px rgba(0,0,0,0.1); }
         .card-body { padding: 1.2rem; }
-        .card-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-            color: #1e2a3a;
-        }
-        .card-subtitle {
-            font-size: 0.8rem;
-            color: #FF8C42;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-        .genre-badge {
-            background: #f0f2f5;
-            color: #2c3e50;
-            font-size: 0.7rem;
-            border-radius: 30px;
-            padding: 0.2rem 0.7rem;
-            display: inline-block;
-            margin-bottom: 0.6rem;
-        }
-        .card-text {
-            color: #5a6e7c;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-        .btn-detail {
-            background: #FF8C42;
-            border: none;
-            border-radius: 40px;
-            padding: 0.4rem 1rem;
-            font-weight: 600;
-            color: white;
-            width: 100%;
-            font-size: 0.9rem;
-        }
+        .card-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem; color: #1e2a3a; }
+        .card-subtitle { font-size: 0.8rem; color: #FF8C42; font-weight: 600; margin-bottom: 0.3rem; }
+        .genre-badge { background: #f0f2f5; color: #2c3e50; font-size: 0.7rem; border-radius: 30px; padding: 0.2rem 0.7rem; display: inline-block; margin-bottom: 0.6rem; }
+        .card-text { color: #5a6e7c; font-size: 0.85rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 1rem; }
+        .btn-detail { background: #FF8C42; border: none; border-radius: 40px; padding: 0.4rem 1rem; font-weight: 600; color: white; width: 100%; font-size: 0.9rem; }
         .btn-detail:hover { background: #FF6A2E; }
         
-        /* Sidebar Top 10 */
-        .sidebar-card {
-            background: white;
-            border-radius: 1.2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            padding: 1.2rem;
-            position: sticky;
-            top: 90px;
-        }
-        .sidebar-title {
-            font-weight: 700;
-            border-left: 4px solid #FF8C42;
-            padding-left: 0.8rem;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        .list-hot-item {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 0.7rem 0;
-            border-bottom: 1px solid #eee;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .list-hot-item:hover {
-            background: #fff5ed;
-            transform: translateX(5px);
-        }
-        .list-rank {
-            font-size: 1.3rem;
-            font-weight: 800;
-            width: 35px;
-            text-align: center;
-            color: #FF8C42;
-        }
-        .list-info { flex: 1; }
-        .list-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.2rem;
-            color: #1e2a3a;
-        }
-        .list-meta {
-            font-size: 0.7rem;
-            color: #7f8c8d;
-        }
-        .list-meta i { margin-right: 0.2rem; }
+        .sidebar-card { background: white; border-radius: 1.2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 1.2rem; position: sticky; top: 90px; }
+        .sidebar-title { font-weight: 700; border-left: 4px solid #FF8C42; padding-left: 0.8rem; margin-bottom: 1rem; font-size: 1.2rem; }
+        .list-hot-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0; border-bottom: 1px solid #eee; transition: 0.2s; cursor: pointer; }
+        .list-hot-item:hover { background: #fff5ed; transform: translateX(5px); }
+        .list-rank { font-size: 1.3rem; font-weight: 800; width: 35px; text-align: center; color: #FF8C42; }
+        .list-title { font-weight: 600; font-size: 0.9rem; color: #1e2a3a; }
+        .list-meta { font-size: 0.7rem; color: #7f8c8d; }
         
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 1.2rem;
-        }
-        
-        footer {
-            background: #1e2a3a;
-            color: #b0c4de;
-            margin-top: 3rem;
-            padding: 2rem 0;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar-card { position: static; margin-top: 2rem; }
-        }
+        .empty-state { text-align: center; padding: 3rem; background: white; border-radius: 1.2rem; }
+        .load-more-btn { background: #FF8C42; color: white; border: none; border-radius: 40px; padding: 0.6rem 2rem; font-weight: 600; transition: 0.2s; }
+        .load-more-btn:hover { background: #FF6A2E; }
+        footer { background: #1e2a3a; color: #b0c4de; margin-top: 3rem; padding: 2rem 0; text-align: center; }
+        @media (max-width: 768px) { .sidebar-card { position: static; margin-top: 2rem; } }
     </style>
 </head>
 <body>
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">LNOVEL</a>
+        <a class="navbar-brand" href="{{ url_for('home') }}">Novels Haven</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -223,7 +68,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             {% if current_user.role == 'admin' %}
-                            <li><a class="dropdown-item" href="{{ url_for('quan_ly') }}"><i class="fas fa-cog me-2"></i>Quản lý tài khoản</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('quan_ly') }}"><i class="fas fa-cog me-2"></i>Quản lý</a></li>
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
@@ -238,54 +83,43 @@
     </div>
 </nav>
 
-<!-- ================= MAIN CONTENT ================= -->
-<div class="container my-4">
-    <div class="row">
-        <!-- Cột trái: Danh sách truyện (grid) -->
-        <div class="col-lg-8">
-            <!-- Thanh tìm kiếm -->
-            <div class="search-section">
+<!-- HERO + SEARCH -->
+<div class="hero-search">
+    <div class="container text-center">
+        <h1 class="mb-3">📖 Khám phá vạn giới truyện</h1>
+        <p class="text-white-50 mb-4">Tìm kiếm hàng ngàn bộ light novel hấp dẫn</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
                 <form class="search-form" method="GET" action="{{ url_for('home') }}">
                     <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Tìm kiếm truyện..." value="{{ request.args.get('q', '') }}">
+                        <input type="text" name="q" class="form-control" placeholder="Nhập tên truyện" value="{{ request.args.get('q', '') }}">
                         <button class="btn" type="submit"><i class="fas fa-search me-1"></i> Tìm</button>
                     </div>
                 </form>
-            </div>
-
-            {% if request.args.get('q') %}
-                <!-- Kết quả tìm kiếm -->
-                {% if ds_truyen %}
-                    <h4 class="fw-semibold mb-3">🔍 Kết quả cho "{{ request.args.get('q') }}"</h4>
-                    <div class="row g-3">
-                        {% for truyen in ds_truyen %}
-                        <div class="col-md-6 col-lg-4">
-                            <div class="novel-card card h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">{{ truyen.ten_truyen }}</h5>
-                                    <div class="card-subtitle"><i class="fas fa-feather-alt me-1"></i> {{ truyen.tac_gia }}</div>
-                                    <div class="genre-badge"><i class="fas fa-tag me-1"></i> {{ truyen.the_loai }}</div>
-                                    <p class="card-text">{{ truyen.mo_ta }}</p>
-                                    <a href="{{ url_for('chi_tiet_truyen', id=truyen.id) }}" class="btn btn-detail mt-auto"><i class="fas fa-book-open me-2"></i>Đọc ngay</a>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <div class="empty-state">
-                        <i class="fas fa-frown-open fa-3x text-warning"></i>
-                        <h3 class="mt-3">Không tìm thấy truyện</h3>
-                        <p class="text-muted">Thử từ khóa khác nhé!</p>
-                        <a href="{{ url_for('home') }}" class="btn btn-detail px-4">← Quay lại</a>
-                    </div>
+                {% if request.args.get('q') %}
+            
                 {% endif %}
-            {% else %}
-                <!-- Hiển thị tất cả truyện (bố cục giống tangthuvien) -->
-                <h4 class="fw-semibold border-start border-4 border-warning ps-3 mb-3">📚 Danh sách truyện</h4>
-                <div class="row g-3">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <!-- Cột chính: danh sách truyện -->
+        <div class="col-lg-8">
+            {% if ds_truyen %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-semibold">
+                        {% if request.args.get('q') %}🔍 Kết quả cho "{{ request.args.get('q') }}"{% else %}📚 Tất cả truyện{% endif %}
+                        <span class="badge bg-secondary ms-2">{{ ds_truyen|length }}</span>
+                    </h4>
+                </div>
+                
+                <!-- Grid hiển thị truyện, dùng client‑side pagination -->
+                <div class="row g-4" id="novel-grid">
                     {% for truyen in ds_truyen %}
-                    <div class="col-md-6 col-lg-4">
+                    <div class="col-12 col-sm-6 col-md-4 novel-item" style="display: block;">
                         <div class="novel-card card h-100">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">{{ truyen.ten_truyen }}</h5>
@@ -296,17 +130,24 @@
                             </div>
                         </div>
                     </div>
-                    {% else %}
-                    <div class="col-12">
-                        <div class="empty-state">Chưa có truyện nào.</div>
-                    </div>
                     {% endfor %}
+                </div>
+                
+                <!-- Nút "Xem thêm" (client‑side) -->
+                <div class="text-center mt-4" id="load-more-container">
+                    <button class="load-more-btn" id="load-more-btn">Xem thêm truyện <i class="fas fa-arrow-down ms-2"></i></button>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-frown-open fa-3x text-warning"></i>
+                    <h3 class="mt-3">Không tìm thấy truyện</h3>
+                    <p class="text-muted">Thử từ khóa khác nhé!</p>
+                    <a href="{{ url_for('home') }}" class="btn btn-detail px-4">← Quay lại</a>
                 </div>
             {% endif %}
         </div>
-
-        <!-- Cột phải: Top 10 lượt xem (chỉ hiển thị khi không tìm kiếm) -->
-        {% if not request.args.get('q') and top_10 %}
+        
+        <!-- Sidebar Top 10 -->
         <div class="col-lg-4 mt-4 mt-lg-0">
             <div class="sidebar-card">
                 <div class="sidebar-title"><i class="fas fa-chart-line me-2 text-warning"></i>TOP 10 LƯỢT XEM</div>
@@ -323,17 +164,52 @@
                 </div>
             </div>
         </div>
-        {% endif %}
     </div>
 </div>
 
 <footer>
     <div class="container">
         <p class="mb-0"><i class="fas fa-dragon"></i> LightNovel Haven - Nơi đam mê bay xa</p>
-        <small>&copy; 2025 LNOVEL. Mọi quyền được bảo lưu.</small>
+        <small>&copy; 2025 Novels Haven. Mọi quyền được bảo lưu.</small>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Client‑side pagination: hiển thị 12 truyện đầu, click nút xem thêm load thêm 12
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.novel-item');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (!loadMoreBtn) return; // nếu không có nút (ds_truyen rỗng) thì thoát
+        
+        let currentCount = 12;
+        const step = 12;
+        
+        // Ẩn các item vượt quá 12 ban đầu
+        function updateVisibility() {
+            for (let i = 0; i < items.length; i++) {
+                if (i < currentCount) {
+                    items[i].style.display = 'block';
+                } else {
+                    items[i].style.display = 'none';
+                }
+            }
+            if (currentCount >= items.length) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'inline-block';
+            }
+        }
+        
+        // Khởi tạo: hiển thị 12 cái đầu
+        updateVisibility();
+        
+        // Bắt sự kiện click
+        loadMoreBtn.addEventListener('click', function() {
+            currentCount += step;
+            updateVisibility();
+        });
+    });
+</script>
 </body>
 </html>

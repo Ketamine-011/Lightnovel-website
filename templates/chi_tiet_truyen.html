@@ -166,7 +166,7 @@
 <!-- ================= NAVBAR ================= -->
 <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="{{ url_for('home') }}">LNOVEL</a>
+        <a class="navbar-brand" href="{{ url_for('home') }}">Novels Haven</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -234,10 +234,10 @@
             <div class="list-group">
                 {% for chuong in ds_chuong %}
                 <div class="chapter-item">
-                    <a href="{{ url_for('chi_tiet_truyen', id=truyen.id, chuong_id=chuong.id) }}">
-                        <i class="fas fa-file-lines me-2"></i>
-                        <strong>Chương {{ loop.index }}:</strong> {{ chuong.ten_chuong }}
-                    </a>
+                    <a href="{{ url_for('doc_truyen', id=chuong.id ) }}">
+                    <i class="fas fa-file-lines me-2"></i>
+                    <strong>Chương {{ loop.index }}:</strong> {{ chuong.ten_chuong }}
+                </a>
                 </div>
                 {% endfor %}
             </div>
@@ -255,7 +255,7 @@
 <footer>
     <div class="container">
         <p class="mb-0"><i class="fas fa-dragon"></i> LightNovel Haven - Nơi đam mê bay xa</p>
-        <small>&copy; 2025 LNOVEL. Mọi quyền được bảo lưu.</small>
+        <small>&copy; 2025 Novels Haven. Mọi quyền được bảo lưu.</small>
     </div>
 </footer>
 

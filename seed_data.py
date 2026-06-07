@@ -1,9 +1,33 @@
-#File truyện mẫu do AI tạo ra để lưu vào db
+# File truyện mẫu và tài khoản Admin khởi tạo ban đầu
+import random
+from werkzeug.security import generate_password_hash
 from app import app
-from models import db, Truyen
+from models import db, Truyen, User
 
 def seed_data():
     with app.app_context():
+        tai_khoan_admin = User.query.filter_by(username="admin").first()
+        if not tai_khoan_admin:
+            hash_pw = generate_password_hash("admin123")
+            admin_user = User(
+                username="admin",
+                email="admin@gmail.com",
+                password=hash_pw,
+                role="admin"  
+            )
+            db.session.add(admin_user)
+            print(" Tài khoản: admin | Mật khẩu: admin123")
+        else:
+            print("Tài khoản Admin đã tồn tại từ trước.")
+
+
+        #Nạp truyện=
+        if Truyen.query.first():
+            print("⚠️ Database đã có truyện rồi, không nạp trùng nữa ông nhé!")
+            db.session.commit() #commit phần admin
+            return
+
+        print("📚 Đang khởi tạo danh sách 50 bộ truyện mẫu...")
         novels = [
             Truyen(
                 ten_truyen="Thần Kê Biến Dị",
@@ -142,7 +166,7 @@ def seed_data():
                 ten_truyen="Đế Bá",
                 tac_gia="Yếm Bút Tiêu Sinh",
                 the_loai="Huyền Huyễn",
-                mo_ta="Nuôi một con quạ đen đi qua ng ngàn năm lịch sử, Lý Thất Dạ thức tỉnh vạn cổ, lấy lại thân xác vô địch thiên hạ.",
+                mo_ta="Nuôi một con quạ đen đi qua ngàn năm lịch sử, Lý Thất Dạ thức tỉnh vạn cổ, lấy lại thân xác vô địch thiên hạ.",
                 luot_xem=6890
             ),
             Truyen(
@@ -210,7 +234,7 @@ def seed_data():
             ),
             Truyen(
                 ten_truyen="Độc Bộ Thiên Hạ",
-                tac_gia="宅猪",
+                tac_gia="Trạch Trư",
                 the_loai="Huyền Huyễn",
                 mo_ta="Diệp Húc vô tình nhặt được đỉnh báu, từ đó mở ra con đường tu luyện khí phách, độc bộ thiên hạ vô song.",
                 luot_xem=4760
@@ -261,14 +285,14 @@ def seed_data():
                 ten_truyen="Chân Vũ Thế Giới",
                 tac_gia="Tàm Kiếm Triền Miên",
                 the_loai="Võ Hiệp",
-                mo_ta="Dịch Vân nhặt được một張 Tử Thần Thẻ Bài bí ẩn, mở ra võ đạo chân chính của vũ trụ bao la.",
+                mo_ta="Dịch Vân nhặt được một Tử Thần Thẻ Bài bí ẩn, mở ra võ đạo chân chính của vũ trụ bao la.",
                 luot_xem=3320
             ),
             Truyen(
                 ten_truyen="Nghịch Thiên Tà Thần",
                 tac_gia="Hỏa Tinh Dẫn Lực",
                 the_loai="Huyền Huyễn",
-                mo_ta="Mang theo huyền thiên bảo châu, Vân Triệt sống lại với tà cốt vô địch, khiến chư thần vạn giới phải run sợ.",
+                mo_ta="Mang theo huyền thiên bảo châu, Vân Triệt sống lại with tà cốt vô địch, khiến chư thần vạn giới phải run sợ.",
                 luot_xem=3110
             ),
             Truyen(
@@ -349,7 +373,7 @@ def seed_data():
                 luot_xem=980
             ),
             Truyen(
-                ten_truyen="Huyết Tế Thiên Địa",
+                ten_truyen="Huyết Tế Thiên独立",
                 tac_gia="Ma Đao",
                 the_loai="Kinh Dị",
                 mo_ta="Bí mật về giáo phái cổ xưa dùng máu hiến tế thần linh, mở ra kỷ nguyên bóng tối bao trùm nhân gian.",
@@ -357,12 +381,10 @@ def seed_data():
             )
         ]
 
-        # Thực hiện add đồng loạt danh sách vào database
-        for novel in novels:
-            db.session.add(novel)
+        # Thêm đồng loạt 50 bộ truyện
+        db.session.add_all(novels)
         db.session.commit()
-        print("🎉 Đã nạp thành công 50 bộ truyện mẫu tuân thủ đúng cấu trúc yêu cầu rồi ông nhé!")
-
+        print("🎉 Đã nạp thành công 50 bộ truyện mẫu siêu đẹp vào Database!")
 
 if __name__ == "__main__":
     seed_data()

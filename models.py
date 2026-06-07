@@ -9,7 +9,7 @@ class Truyen(db.Model):
     tac_gia = db.Column(db.String(100), nullable = False)
     the_loai = db.Column(db.String(100), nullable = False)
     mo_ta = db.Column(db.Text, nullable = False)
-    chaps = db.relationship('Chuong', backref = 'truyen', lazy = True)
+    luot_xem = db.Column(db.Integer, default=0)
 
 # Database quản lý người dùng
 class User(UserMixin, db.Model):
@@ -24,6 +24,4 @@ class Chuong(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ten_chuong = db.Column(db.String(100), nullable=False)
     noi_dung = db.Column(db.Text, nullable=False)
-    truyen_id = db.Column(db.Integer, db.ForeignKey('truyen.id'), nullable=False)
-
-
+    id_truyen = db.Column(db.Integer, db.ForeignKey('truyen.id'), nullable=False)

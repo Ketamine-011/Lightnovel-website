@@ -16,15 +16,15 @@ def Routes(app):
         if request.method == "POST":
             login_username = request.form["username"]
             login_pw = request.form["password"]
-            check_user = User.query.filter_by(username = login_username).first()
-            if check_user and check_password_hash(check_user.password, login_pw):
-                login_user(check_user)
+            check_username = User.query.filter_by(username=login_username).first()
+            if check_username and check_password_hash(check_username.password, login_pw):
+                login_user(check_username)
+
                 return redirect(url_for("home"))
             else:
                 return render_template("dang_nhap.html", error = "Tên đăng nhập hoặc mật khẩu không đúng.")
         return render_template("dang_nhap.html")
-        
-
+    
             
 
     @app.route("/dang_ky", methods = ["GET", "POST"])
@@ -46,30 +46,29 @@ def Routes(app):
                 # Mã hóa mật khẩu trước khi lưu vào database
                 hashed_pw = generate_password_hash(pw)
 
-                new_user = User(username = regis_username, email = regis_email, password = hashed_pw, role = "admin")
+
+                new_user = User(username = regis_username, email = regis_email, password = hashed_pw, role="admin")
                 db.session.add(new_user)
                 db.session.commit()
                 return redirect(url_for("login"))
 
         return render_template("dang_ky.html")
+
     @app.route("/dang_xuat")
     def logout():
-        #xóa toàn bộ session của người dùng
         logout_user() 
         return redirect(url_for("home"))
-    
 
 
 
 # ======================
 # Trang chủ + tìm kiếm
-# =====================
+# ======================
+
     @app.route("/")
     def home():
-
-    
-        
         tu_khoa = request.args.get("q", "")
+        top_10 = []
 
         if tu_khoa:
             ds_truyen = Truyen.query.filter(
@@ -84,84 +83,114 @@ def Routes(app):
             ds_truyen=ds_truyen,
             top_10=top_10
         )
-    # ======================
-    # Chi tiết truyện
-    # ======================
     @app.route("/truyen/<int:id>")
     def chi_tiet_truyen(id):
         truyen = Truyen.query.get_or_404(id)
-        ds_chuong = Chuong.query.filter_by(id_truyen=id).all()
+        ds_chuong = Chuong.query.filter_by(id_truyen=id).all() 
+        
+        # Tự động cộng 1 lượt xem khi có người click vào xem truyện
         truyen.luot_xem += 1
         db.session.commit()
+        
         return render_template("chi_tiet_truyen.html", truyen=truyen, ds_chuong=ds_chuong)
+    @app.route("/quan_ly")
+    @login_required
+    def quan_ly():
+        check_role("admin")
+        tat_ca_truyen = Truyen.query.all()
+
+        chon_id = request.args.get("id_truyen", type=int)
+        chon_truyen = None
+        ds_chuong = []
+        if chon_id:
+            chon_truyen = Truyen.query.get(chon_id)
+            if chon_truyen:
+                ds_chuong = Chuong.query.filter_by(id_truyen=chon_id).all()
+   
+
+        return render_template("quan_ly.html", 
+                           ds_truyen=tat_ca_truyen,
+                           selected_truyen=chon_truyen,
+                           selected_id_truyen=chon_id,
+                           ds_chuong=ds_chuong)
+ 
+    @app.route("/them-truyen", methods=["GET", "POST"])
+    @login_required
+    def them_truyen():
+        check_role("admin")
+        if request.method == "POST":
+            ten = request.form["ten_truyen"]
+            tac_gia = request.form["tac_gia"]
+            the_loai = request.form["the_loai"]
+            mo_ta = request.form["mo_ta"]
+            truyen_moi = Truyen(ten_truyen=ten, tac_gia=tac_gia, the_loai=the_loai, mo_ta=mo_ta, luot_xem=0)
+            db.session.add(truyen_moi)
+            db.session.commit()
+            return redirect(url_for("quan_ly"))
+
+        return render_template("quan_ly.html")
 
 
+    @app.route("/sua-truyen/<int:id>", methods=["POST"])
+    @login_required
+    def sua_truyen(id):
+        check_role("admin")
+        truyen = Truyen.query.get_or_404(id)
+        
+        truyen.ten_truyen = request.form["ten_truyen"]
+        truyen.tac_gia = request.form["tac_gia"]
+        truyen.the_loai = request.form["the_loai"]
+        truyen.mo_ta = request.form["mo_ta"]
+        
+        db.session.commit()
+        return redirect(url_for("quan_ly"))
 
-    # ======================
-    # Xóa truyện
-    # ======================
-    @app.route("/xoa-truyen/<int:id>")
+
+    @app.route("/xoa-truyen/<int:id>", methods=["POST"])
     @login_required
     def xoa_truyen(id):
         check_role("admin")
-
         truyen = Truyen.query.get_or_404(id)
-
         db.session.delete(truyen)
         db.session.commit()
+        return redirect(url_for("quan_ly"))
 
-        return redirect(url_for("trang_chu"))
-    
 
-    # ======================
-    # Thêm chương
-    # ======================
+    #======================
+    #Thêm, sửa, xóa chương
+    #======================
+
     @app.route("/them-chuong", methods=["POST"])
     @login_required
     def them_chuong():
         check_role("admin")
-
         chuong = Chuong(
             ten_chuong=request.form["ten_chuong"],
             noi_dung=request.form["noi_dung"],
-            truyen_id=request.form["truyen_id"]
+            id_truyen=request.form["id_truyen"]
         )
-
         db.session.add(chuong)
         db.session.commit()
+        return redirect(url_for("quan_ly"))
 
-        return redirect(url_for("trang_chu"))
 
-    # ======================
-    # Sửa chương
-    # ======================
     @app.route("/sua-chuong/<int:id>", methods=["POST"])
     @login_required
     def sua_chuong(id):
-
         check_role("admin")
-
         chuong = Chuong.query.get_or_404(id)
-
         chuong.ten_chuong = request.form["ten_chuong"]
         chuong.noi_dung = request.form["noi_dung"]
-
         db.session.commit()
+        return redirect(url_for("quan_ly"))
 
-        return redirect(url_for("trang_chu"))
 
-    # ======================
-    # Xóa chương
-    # ======================
-    @app.route("/xoa-chuong/<int:id>")
+    @app.route("/xoa-chuong/<int:id>", methods=["POST", "GET"])
     @login_required
     def xoa_chuong(id):
-
         check_role("admin")
-
         chuong = Chuong.query.get_or_404(id)
-
         db.session.delete(chuong)
         db.session.commit()
-
-        return redirect(url_for("trang_chu"))
+        return redirect(url_for("quan_ly")) 
+    

@@ -99,7 +99,21 @@ def Routes(app):
     def quan_ly():
         check_role("admin")
         tat_ca_truyen = Truyen.query.all()
-        return render_template("quan_ly.html", ds_truyen=tat_ca_truyen)
+
+        chon_id = request.args.get("truyen_id", type=int)
+        chon_truyen = None
+        ds_chuong = []
+        if chon_id:
+            chon_truyen = Truyen.query.get(selected_id)
+            if chon_truyen:
+                ds_chuong = Chuong.query.filter_by(id_truyen=selected_id).all()
+   
+
+        return render_template("quan_ly.html", 
+                           ds_truyen=tat_ca_truyen,
+                           selected_truyen=chon_truyen,
+                           selected_truyen_id=chon_id,
+                           ds_chuong=ds_chuong)
  
     @app.route("/them-truyen", methods=["GET", "POST"])
     @login_required
@@ -180,24 +194,4 @@ def Routes(app):
         db.session.delete(chuong)
         db.session.commit()
         return redirect(url_for("quan_ly")) 
-    @app.route("/quan_ly")
-    @login_required
-    def quan_ly():
-     check_role("admin")
-    tat_ca_truyen = Truyen.query.all()
-
-    #=== THÊM CÁC DÒNG SAU ===,
-    selected_id = request.args.get("truyen_id", type=int)
-    selected_truyen = None
-    ds_chuong = []
-    if selected_id:
-        selected_truyen = Truyen.query.get(selected_id)
-        if selected_truyen:
-            ds_chuong = Chuong.query.filter_by(id_truyen=selected_id).all()
-    # ==========================
-
-    return render_template("quan_ly.html", 
-                           ds_truyen=tat_ca_truyen,
-                           selected_truyen=selected_truyen,
-                           selected_truyen_id=selected_id,
-                           ds_chuong=ds_chuong)
+    

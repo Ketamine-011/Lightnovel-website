@@ -148,8 +148,8 @@
         {{ chuong.noi_dung|safe }}
     </div>
     <div class="navigation">
-        {% if prev_chuong %}
-            <a href="{{ url_for('doc_truyen', id=prev_chuong.id) }}" class="nav-btn">
+        {% if chuong_truoc %}
+            <a href="{{ url_for('doc_truyen', id=chuong_truoc.id) }}" class="nav-btn">
                 <i class="fas fa-chevron-left"></i> Chương trước
             </a>
         {% else %}
@@ -160,8 +160,8 @@
             <i class="fas fa-list"></i> Danh sách chương
         </a>
         
-        {% if next_chuong %}
-            <a href="{{ url_for('doc_truyen', id=next_chuong.id) }}" class="nav-btn">
+        {% if chuong_tiep %}
+            <a href="{{ url_for('doc_truyen', id=chuong_tiep.id) }}" class="nav-btn">
                 Chương tiếp <i class="fas fa-chevron-right"></i>
             </a>
         {% else %}

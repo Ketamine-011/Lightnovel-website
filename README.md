@@ -1,5 +1,5 @@
 # Novels Haven - Website Đọc Truyện LightNovel Trực Tuyến
-Dự án môn học xây dựng ứng dụng web đọc và quản lý truyện LightNovel trực tuyến, sử dụng ngôn ngữ lập trình Python và Flask
+Dự án môn học xây dựng ứng dụng web đọc và quản lý truyện LightNovel trực tuyến, sử dụng ngôn ngữ lập trình Python và Micro - Framework Flask
 ### **Tóm tắt chức năng của hệ thống**
 ### 1. Phân Hệ Người đọc
 * **Đăng ký & Đăng nhập:** Cho phép độc giả tạo tài khoản mới và đăng nhập duy trì phiên làm việc qua Session Cookie.
@@ -31,3 +31,9 @@ Dự án môn học xây dựng ứng dụng web đọc và quản lý truyện 
 * **Bước 4:** Khởi chạy Server Flask
   * `python app.py`.
   * **Sau khi Server khởi động thành công, truy cập `http://127.0.0.1:5000` để trải nghiệm.**
+### Nếu làm tất cả các bước trên nhưng vẫn còn lỗi về import thư viện thì làm như sau:
+  * Bước 1: Bấm `Ctr + Shift + p` để mở *Command Palette* (
+    hoặc bấm vào bánh răng góc dưới cùng bên trái chọn *Command Palette*)
+  * Bước 2: Trên thanh tìm kiếm, gõ Python: Select Interpreter
+  * Bước 3: Bấm vào đó và chọn phiên bản python có dạng `venv`
+  *(Thao tác này giúp Vs Code hiểu và nạp đúng các thư viện vừa cài trong môi trường ảo vào workspace)*
